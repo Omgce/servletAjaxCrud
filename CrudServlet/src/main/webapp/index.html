@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="ISO-8859-1">
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+	integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+	crossorigin="anonymous">
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap@4.2.1/dist/css/bootstrap.min.css"
+	integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS"
+	crossorigin="anonymous">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+	crossorigin="anonymous">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+<title>CrudServlet</title>
+</head>
+
+<body>
+	<div class="container">
+		<div class="row">
+			<h1 class="text-center">Servlet Crud</h1>
+			<div class="col-md-12">
+				</hr>
+				<br>
+				<button class="btn" onclick="$('#mymodal').modal('show')"
+					style="background-color: white; box-shadow: none; border-radius: 50px;">
+					<i style="font-size: 30px"
+						;
+						class="fas fa-plus-circle text-primary"></i>
+				</button>
+				<form class="myform">
+					<!-- Modal -->
+					<div class="modal fade" data-backdrop="static" id="mymodal">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h3>Add</h3>
+									<button type="button" class="close" data-dismiss="modal">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+									<input type="hidden" value="0" name="id" />
+									<div class="form-group">
+										<label>Enter Name: </label> <input type="text"
+											class="form-control" name="name"
+											placeholder="Enter your name" />
+									</div>
+									<div class="form-group">
+										<label>Enter Mobile: </label> <input type="text"
+											class="form-control" name="mobile"
+											placeholder="Enter your mobile" />
+									</div>
+									<div class="form-group">
+										<label>Enter Email: </label> <input type="text"
+											class="form-control" name="email"
+											placeholder="Enter your email" />
+									</div>
+								</div>
+								<div class="modal-footer">
+									<label class="msg"></label> <input type="submit" value="Save"
+										class="btn btn-primary" /> <input type="reset" value="Reset"
+										class="btn btn-danger" />
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+
+			<div class="col-md-12 mt-3">
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Name</th>
+							<th>Mobile</th>
+							<th>Email</th>
+							<th>Action</th>
+						</tr>
+					</thead>
+					<tbody class="show-data">
+
+						<!-- <tr>
+							<td>op</td>
+							<td>1132534564</td>
+							<td>op@gmail.com</td>
+							<td>
+								<div class="btn-group border" role="group"
+									style="border-radius: 50%;">
+
+
+
+									<button style="background-color: white; box-shadow: none;"
+										class="btn">
+										<i class="fas fa-trash text-danger" style="font-size: 20px;"></i>
+									</button>
+									<button style="background-color: white; box-shadow: none;"
+										class="btn">
+										<i class="fas fa-pen text-primary" style="font-size: 20px;"></i>
+									</button>
+								</div>
+							</td>
+						</tr> -->
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js"
+		integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+		crossorigin="anonymous"></script>
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+		integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+		crossorigin="anonymous"></script>
+	<script>
+	
+	$('#mymodal').on('hide.bs.modal', function(e) {
+		$("#input[name=id]").val(0);
+	});
+	
+		$(document).ready(function() {
+			$(".myform").on("submit", function(e) {
+				e.preventDefault();
+				$.ajax({
+					method : "POST",
+					url : "student",
+					data : new FormData(this),
+					processData : false,
+					contentType : false,
+					beforeSend : function() {
+						$(".msg").html("Please wait....");
+					},
+					success : function(res) {
+						if (res.trim() == "Done") {
+							$(".msg").addClass("text-primary");
+							$(".msg").html("Success");
+							$(".myform").trigger("reset");
+							getAllData();
+							setTimeout(function() {
+								$(".msg").removeClass("text-primary");
+								$(".msg").html("");		
+							}, 3000);
+						}
+						else if(res.trim() == "update") {
+							$(".msg").addClass("text-primary");
+							$(".msg").html("Success");
+							getAllData();
+							setTimeout(function() {
+								$(".msg").removeClass("text-primary");
+								$(".msg").html("");
+								$(".myform").trigger("reset");
+							}, 3000);
+						}
+						
+						/* if (res.trim() == "Done") {
+							$(".msg").addClass("text-primary");
+							$(".msg").html("Success");
+							getAllData();
+							setTimeout(function() {
+								$(".msg").removeClass("text-primary");
+								$(".msg").html("");
+								$(".myform").trigger("reset");
+							}, 3000);
+						} */
+						/* if (res.trim() == "Failed") {
+							$(".msg").addClass("text-danger");
+							$(".msg").html("Failed");
+							setTimeout(function() {
+								$(".msg").removeClass("text-primary");
+								$(".msg").html("");
+								$(".myform").trigger("reset");
+							}, 3000);
+						} */
+					},
+					error : function(error) {
+						
+						if (error.responseText.trim() == "Failed") {
+							$(".msg").addClass("text-danger");
+							$(".msg").html("Failed");
+							setTimeout(function() {
+								$(".msg").removeClass("text-primary");
+								$(".msg").html("");
+								$(".myform").trigger("reset");
+							}, 3000);
+						}else if (error.responseText.trim() == "updated failed") {
+							$(".msg").addClass("text-danger");
+							$(".msg").html("Failed");
+							setTimeout(function() {
+								$(".msg").removeClass("text-primary");
+								$(".msg").html("");
+								$(".myform").trigger("reset");
+							}, 3000);
+						}
+					}
+				});
+			});
+		});
+
+		/* 	$(document).ready(function() {
+				$.ajax({
+					method : "GET",
+					url : "student",
+					beforeSend : function() {
+						console.log("Loading...");
+					},
+					success : function(res) {
+						console.log(res);
+						$(".show-data").html(res);
+					}
+				});
+			}); */
+$(document).ready(function() {
+	getAllData();
+});	
+		const getAllData = ()=> {
+			$.ajax({
+				method : "GET",
+				url : "student",
+				beforeSend : function() {
+					
+				},
+				success : function(res) {
+					$(".show-data").html("");
+					res.forEach(function(data) {
+						let html=`<tr>
+							<td>${data.name}</td>
+							<td>${data.mobile}</td>
+							<td>${data.email}</td>
+							<td>
+								<div class="btn-group border" role="group"
+									style="border-radius: 50px;">
+									
+									
+									
+									<button id="${data.id}" style="background-color: white; box-shadow: none;"
+										class="del-student btn m-1">
+										<i class="fas fa-trash text-danger" style="font-size: 20px;"></i>
+									</button>
+									<div class="spinner-border text-primary m-2 loder d-none" role="status">
+									  <span class="sr-only">Loading...</span>
+									</div>
+									<button id="${data.id}" style="background-color: white; box-shadow: none;"
+										class="edit-student btn m-1">
+										<i class="fas fa-pen text-primary" style="font-size: 20px;"></i>
+									</button>
+								</div>
+							</td>
+						</tr>`;
+						$(".show-data").append(html);
+					});
+					delete_student();
+					edit_student();
+				},
+				error : function(error) {
+					$(".show-data").html(error.responseText);
+				}
+			});
+		}
+			
+			
+/* 		$(document).ready(function() {
+			$.ajax({
+				method : "GET",
+				url : "student",
+				beforeSend : function() {
+					console.log("Loading...");
+				},
+				success : function(res) {
+					$(".show-data").html("");
+					res.forEach(function(data) {
+						let html=`
+							<tr>
+							<td>${data.name}</td>
+							<td>${data.mobile}</td>
+							<td>${data.email}</td>
+							<td>
+								<div class="btn-group border" role="group"
+									style="border-radius: 50px;">
+									<button id="${data.id}" style="background-color: white; box-shadow: none;"
+										class="del-student btn m-1">
+										<i class="fas fa-trash text-danger" style="font-size: 20px;"></i>
+									</button>
+									<button id="${data.id}" style="background-color: white; box-shadow: none;"
+										class="edit-student btn m-1">
+										<i class="fas fa-pen text-primary" style="font-size: 20px;"></i>
+									</button>
+								</div>
+							</td>
+						</tr>
+						`;
+						
+						$(".show-data").append(html);
+						
+					});
+					
+					/* $(".del-student").click(function() {
+						console.log($(this).attr("id"));
+					});
+					
+					$(".edit-student").click(function() {
+						console.log($(this).attr("id"));
+					}); 
+					
+					delete_student();
+					
+				},
+				error : function(error) {
+					
+					$(".show-data").html(error.responseText);
+				}
+			});
+		}); 
+		*/
+			
+		function delete_student() {
+			$(".del-student").click(function() {
+				let el= this.parentElement.parentElement.parentElement;
+				
+				let del_el=this;
+				let del_loder=$(this).next();
+				
+				let id = $(this).attr("id");
+				if(confirm("Are you sure delete this record ?")){
+			$.ajax({
+				method : "DELETE",
+				url : "student?id="+id,
+				beforeSend:function(){
+					
+							$(del_loder).removeClass("d-none");
+							$(del_el).addClass("d-none");
+							
+						},
+				success : function(res) {
+					console.log(res);
+					if(res.trim()== "done"){
+						
+						$(del_loder).addClass("d-none");
+						$(del_el).removeClass("d-none");
+						
+						$(el).addClass("animate_animated animate_backOutRight");
+						setTimeout(function() {
+							el.remove();
+						},1000);
+					}
+				},
+				error : function(error) {
+					console.log(error);
+					alert();
+				}
+			});
+			}
+			});
+		}
+		
+		/* function delete_student() {
+			$(".del-student").click(function() {
+				let el= this.parentElement.parentElement.parentElement;
+			$(el).addClass("animate_animated animate_backOutDown");
+			setTimeout(function(){
+				el.remove();
+			}, 1000);
+			});
+		}	 */
+		
+/* 		function delete_student() {
+			$(".del-student").click(function() {
+				
+				let id = $(this).attr("id");
+			$.ajax({
+				method : "DELETE",
+				url : "student?id="+id,
+				success : function(res) {
+					console.log(res);
+				}
+			});
+			});
+		}	 
+		*/
+		
+		const edit_student =()=>{
+			$(".edit-student").click(function(){
+				
+				let edit_el=this;
+				let edit_loder=$(this).prev();
+				
+				
+				let id=$(this).attr("id");
+				
+				let el = this.parentElement.parentElement.parentElement;
+				let td= el.getElementsByTagName("TD");
+
+				/* $("input[name=id]").val(id);
+				$("input[name=name]").val(td[0].innerText);
+				$("input[name=mobile]").val(td[1].innerText);
+				$("input[name=email]").val(td[2].innerText);
+				 */
+				$.ajax({
+					method:"GET",
+					url:"student?id="+id,
+					beforeSend:function(){
+						$(edit_loder).removeClass("d-none");
+						$(edit_el).addClass("d-none");
+					},
+					success:function(res){
+						
+						$(edit_loder).addClass("d-none");
+						$(edit_el).removeClass("d-none");
+						
+						let student = JSON.parse(res);
+						$("input[name=id]").val(student.id);
+						$("input[name=name]").val(student.name);
+						$("input[name=mobile]").val(student.mobile);
+						$("input[name=email]").val(student.email);
+						$("#mymodal").modal("show");
+						 
+					},
+					error:function(err){
+						console.log(err);
+					}
+				})
+				
+			});
+		}
+		
+		
+		
+	</script>
+</body>
+</html>
